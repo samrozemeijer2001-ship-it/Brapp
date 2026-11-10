@@ -65,7 +65,7 @@
 .card-green  { --c-dark: var(--mint-ink);   --c-light: var(--mint); }
 
 /* ---- Foto's per persoon (ongewijzigd, alleen anders bijgesneden) ---- */
-.card-pink   .card-photo, .card-pink   .hero-photo { background-image: url(Assets/Rick.jpeg?v=2); }
+.card-pink   .card-photo, .card-pink   .hero-photo { background-image: url(Assets/Rick.jpeg?v=4); }
 .card-blue   .card-photo, .card-blue   .hero-photo { background-image: url(Assets/Sam.jpeg); }
 .card-orange .card-photo, .card-orange .hero-photo { background-image: url(Assets/Ignash.jpeg); }
 .card-green  .card-photo, .card-green  .hero-photo { background-image: url(Assets/Romy.jpeg); }

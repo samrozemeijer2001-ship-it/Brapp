@@ -44,7 +44,7 @@ const TASKS = {
   woonkamer: {
     name: "Woonkamer & vuilnis",
     icon: "trash",
-    instructions: "Zet de vuilnisbakken buiten voor donderdag. Vergeet het recycling niet! Stofzuig/ruim ook de woonkamer op."
+    instructions: "Zorg dat de vuilnisbakken de hele week door geleegd worden en breng het vuilnis weg zodra ze vol zijn. Vergeet het recycling niet! Stofzuig/ruim ook de woonkamer op."
   },
   zuigen: {
     name: "Rukbunker, trap, keuken en benedenhal zuigen",
@@ -54,7 +54,7 @@ const TASKS = {
   koelkast: {
     name: "Taaie week maat",
     icon: "sparkle",
-    instructions: "Al het verotte gekanker uit de koelkast en de hele week de vaat in en uitruimen"
+    instructions: "De hele week de vaat/jezelf op de maandag alvast ophangen. En de koelkast checken op schimmel en hepatitis B. En karton weggooien"
   }
 };
 
