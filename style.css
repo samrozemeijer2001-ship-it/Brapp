@@ -1,0 +1,826 @@
+/* ============================================================
+   STYLE.CSS — BR Chore Tracker in Lafbekken-stijl
+   ------------------------------------------------------------
+   Brutaal, plat en kleurrijk: een interactieve poster.
+   Regels: geen borders, geen schaduwen, geen gradients, geen
+   blur, geen pill-vormen. Kleur, compositie en typografie doen
+   het werk. Alle kleuren, maten en curves staan hieronder als
+   custom properties.
+   ============================================================ */
+
+:root {
+  /* ---- Basiskleuren ---- */
+  --ink: #141210;
+  --paper: #fff6ea;
+  --bg: #f3ede4;
+
+  /* ---- Kleurparen (vlak / tekst & illustratie) ---- */
+  --mint: #7fe0a8;        --mint-ink: #0f5a3a;
+  --sky: #7fb7ff;         --sky-ink: #14306b;
+  --lilac: #b98cff;       --lilac-ink: #2b1360;
+  --cobalt: #2747c9;      --cobalt-ink: #d8e4ff;
+  --yellow: #ffcc2e;      --yellow-ink: #a3300f;
+  --orange: #ff8a3d;      --orange-ink: #4a1a05;
+  --red: #ff5a3c;         --red-ink: #fff3c4;
+  --purple: #3a1a6b;      --purple-ink: #ff8fc8;
+  --pink: #ff8fc8;        --pink-ink: #6b0f3a;
+
+  /* ---- Afrondingen ---- */
+  --r-sm: 12px;
+  --r-md: 16px;
+  --r-lg: 22px;
+  --r-card: 30px;
+  --r-hero: 36px;
+  --r-btn: 20px;
+  --r-icon: 14px;
+  --r-sheet: 30px;
+
+  /* ---- Ruimte ---- */
+  --gutter: 24px;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+
+  /* ---- Typografie ---- */
+  --font-display: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+  --font-body: 'Rubik', system-ui, sans-serif;
+
+  /* ---- Beweging ---- */
+  --spring: cubic-bezier(.34, 1.56, .64, 1);
+  --soft: cubic-bezier(.22, 1, .36, 1);
+}
+
+/* ---- Persoonskleuren ----
+   De klassenamen komen uit data.js (colorClass) en blijven gelijk.
+   --c-bg = vlak, --c-ink = tekst/illustratie op dat vlak. */
+.card-pink   { --c-bg: var(--pink);   --c-ink: var(--pink-ink); }
+.card-blue   { --c-bg: var(--cobalt); --c-ink: var(--cobalt-ink); }
+.card-orange { --c-bg: var(--orange); --c-ink: var(--orange-ink); }
+.card-green  { --c-bg: var(--mint);   --c-ink: var(--mint-ink); }
+
+/* Donker/licht per persoon voor de kopband bovenin: de band loopt onder
+   de (witte) iPhone-statusbalk door, dus die moet donker genoeg zijn. */
+.card-pink   { --c-dark: var(--pink-ink);   --c-light: var(--pink); }
+.card-blue   { --c-dark: var(--cobalt);     --c-light: var(--cobalt-ink); }
+.card-orange { --c-dark: var(--orange-ink); --c-light: var(--orange); }
+.card-green  { --c-dark: var(--mint-ink);   --c-light: var(--mint); }
+
+/* ---- Foto's per persoon (ongewijzigd, alleen anders bijgesneden) ---- */
+.card-pink   .card-photo, .card-pink   .hero-photo { background-image: url(Assets/Chels.png); }
+.card-blue   .card-photo, .card-blue   .hero-photo { background-image: url(Assets/Sam.jpeg); }
+.card-orange .card-photo, .card-orange .hero-photo { background-image: url(Assets/Ignash.jpeg); }
+.card-green  .card-photo, .card-green  .hero-photo { background-image: url(Assets/Romy.jpeg); }
+
+/* ============================================================
+   BASIS
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  border: 0;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+}
+button:focus-visible { outline: 4px solid var(--ink); outline-offset: 3px; }
+
+svg { display: block; width: 100%; height: 100%; }
+
+/* De app is één schermvullend 'telefoonvlak' */
+.app {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  margin: 0 auto;
+  overflow: hidden;
+  background: var(--bg);
+  container-type: inline-size; /* cqw-eenheden schalen mee met de app-breedte */
+}
+
+/* Op desktop: gecentreerde telefoon-interface */
+@media (min-width: 600px) and (min-height: 640px) {
+  body {
+    background: var(--ink);
+    display: grid;
+    place-items: center;
+  }
+  .app {
+    width: 430px;
+    height: min(932px, calc(100dvh - 48px));
+    border-radius: 46px;
+  }
+}
+
+/* Kleine labels (Rubik 800) */
+.eyebrow {
+  font-family: var(--font-body);
+  font-weight: 800;
+  font-size: 12.5px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+/* Barlow-koppen: altijd hoofdletters, strak op elkaar */
+.app-title, .week-num, .card-name, .detail-name, .detail-task-name,
+.done-title, .celebrate-title, .rules-sheet-title, .back-button,
+.done-button, .card-done, .hero-stamp, #loading-text {
+  font-family: var(--font-display);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -.005em;
+  line-height: .85;
+}
+
+/* Vierkante icoonknop 44×44 */
+.icon-button {
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border-radius: var(--r-icon);
+  background: var(--ink);
+  color: var(--paper);
+  display: grid;
+  place-items: center;
+  transition: transform 420ms var(--spring);
+}
+.icon-button span { width: 22px; height: 22px; }
+.icon-button:active { transform: scale(.9); transition-duration: 90ms; }
+
+/* ============================================================
+   SCHERMEN
+   Home is de basislaag; het taakscherm schuift eroverheen.
+   ============================================================ */
+.screen {
+  position: absolute;
+  inset: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: none; /* geen doorveren → geen kale randen boven/onder */
+}
+.detail-screen { visibility: hidden; z-index: 5; }
+.detail-screen.active { visibility: visible; }
+
+/* ============================================================
+   SCHERM A — HOME
+   ============================================================ */
+.home-screen {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0 var(--gutter) calc(var(--safe-bottom) + 18px);
+}
+
+/* Inktband bovenin: loopt door tot onder de statusbalk (klok blijft leesbaar) */
+.home-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 44px;
+  margin: 0 calc(var(--gutter) * -1);
+  padding: calc(var(--safe-top) + 10px) var(--gutter) 12px;
+  border-radius: 0 0 var(--r-sheet) var(--r-sheet);
+  background: var(--ink);
+  color: var(--paper);
+}
+.home-topbar { position: relative; }
+
+/* Kapje achter de statusbalk: verschijnt pas als je wegscrolt van de
+   kopband, zodat tekst nooit onder de klok door schuift. Zelfde kleur als
+   de band → bij terugscrollen versmelt het er naadloos mee. */
+.status-cover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  height: var(--safe-top);
+  border-radius: 0 0 var(--r-lg) var(--r-lg);
+  background: var(--ink);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 180ms var(--soft);
+}
+.status-cover.show { opacity: 1; }
+.status-cover.on-detail { background: var(--c-dark); }
+.home-topbar .icon-button { background: var(--paper); color: var(--ink); }
+
+/* Verlengstuk boven de kopbanden: wie (op oudere iPhones) omlaag doorveert,
+   ziet de band gewoon verder lopen in plaats van een kale rand */
+.home-topbar::before, .detail-bar::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  height: 100vh;
+  background: inherit;
+  pointer-events: none;
+}
+
+.home-header {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.app-title {
+  margin: 0;
+  font-size: clamp(46px, 15.5vw, 76px);
+  font-size: clamp(46px, 15.5cqw, 76px);
+  line-height: .82;
+  align-self: end;
+  animation: rise-in 620ms var(--soft) both;
+}
+
+/* Week-vlak: compact, geel, groot getal */
+.week-block {
+  flex: none;
+  width: clamp(98px, 30cqw, 124px);
+  border-radius: var(--r-lg);
+  background: var(--yellow);
+  color: var(--yellow-ink);
+  padding: 10px 12px 11px;
+  display: flex;
+  flex-direction: column;
+  animation: pop-in 640ms var(--spring) 120ms both;
+}
+.week-label, .week-range, .week-left {
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: .06em;
+  line-height: 1.1;
+}
+.week-num {
+  font-size: clamp(50px, 16cqw, 66px);
+  margin: 2px 0 4px -2px;
+}
+.week-left { margin-top: 2px; opacity: .72; white-space: nowrap; }
+
+/* ---- 2×2-grid met persoonskaarten ---- */
+.cards-grid {
+  flex: 1;
+  min-height: 360px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 12px;
+}
+
+.person-card {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding: 7px 7px 13px;
+  border-radius: var(--r-card);
+  background: var(--c-bg);
+  color: var(--c-ink);
+  text-align: left;
+  transition: transform 460ms var(--spring);
+}
+.person-card:active { transform: scale(.94); transition-duration: 110ms; }
+
+/* Kaarten veren binnen (bij laden en bij terugkomen) */
+.cards-grid.enter .person-card {
+  animation: card-in 680ms var(--spring) both;
+  animation-delay: calc(var(--i) * 70ms + 80ms);
+}
+
+/* Foto groot bovenin de kaart */
+.card-photo {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  border-radius: 23px;
+  background-color: var(--c-ink);
+  background-size: cover;
+  background-position: center 28%;
+  background-repeat: no-repeat;
+}
+
+/* Taakillustratie als grote sticker op de foto */
+.card-task {
+  position: absolute;
+  left: 7px;
+  bottom: 7px;
+  width: clamp(48px, 16cqw, 66px);
+  aspect-ratio: 1;
+  padding: 7px;
+  border-radius: var(--r-md);
+  background: var(--c-ink);
+  color: var(--c-bg);
+  transform: rotate(-5deg);
+}
+
+/* "KLAAR"-stempel op de kaart */
+.card-done {
+  position: absolute;
+  top: 9px;
+  right: 7px;
+  padding: 7px 9px 5px;
+  border-radius: var(--r-sm);
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 20px;
+  transform: rotate(6deg) scale(0);
+  transition: transform 520ms var(--spring);
+}
+.person-card.is-done .card-done { transform: rotate(6deg) scale(1); }
+
+.card-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  padding: 0 6px 0 7px;
+}
+.card-name {
+  --len: 4;
+  min-width: 0;
+  /* schaalt mee met de naamlengte, zodat een naam nooit afbreekt */
+  font-size: clamp(20px, 9cqw, 38px);
+  font-size: clamp(18px, calc((50cqw - 78px) * 1.8 / var(--len)), 38px);
+  white-space: nowrap;
+}
+.card-face {
+  flex: none;
+  width: clamp(34px, 11cqw, 44px);
+  aspect-ratio: 1;
+}
+.person-card .strikes { padding: 0 7px; }
+
+/* ---- Kruisjes ---- */
+.strikes { display: flex; gap: 6px; }
+.strike {
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
+  background: var(--c-ink);
+  color: var(--c-bg);
+  padding: 3px;
+  opacity: .2;
+  transition: opacity 200ms var(--soft);
+}
+.strike svg { opacity: 0; }
+.strike.strike-active { opacity: 1; }
+.strike.strike-active svg { opacity: 1; }
+.strike.pop { animation: strike-pop 560ms var(--spring); }
+
+.strikes-lg { gap: 8px; }
+.strikes-lg .strike { width: 40px; height: 40px; border-radius: var(--r-sm); padding: 6px; }
+
+/* ============================================================
+   SCHERM B — PERSOONLIJK TAAKSCHERM
+   ============================================================ */
+.detail-screen {
+  display: flex;
+  flex-direction: column;
+  background: var(--c-bg);
+  color: var(--c-ink);
+}
+
+/* Kleur neemt het scherm over vanuit de aangetikte kaart */
+.detail-screen.active {
+  animation: reveal 560ms var(--soft) both;
+}
+.detail-screen.closing {
+  animation: conceal 380ms var(--soft) forwards;
+}
+
+.detail-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: calc(var(--safe-top) + 10px) var(--gutter) 12px;
+  border-radius: 0 0 var(--r-sheet) var(--r-sheet);
+  background: var(--c-dark);
+  position: relative;
+}
+
+.back-button {
+  height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 16px 0 10px;
+  border-radius: var(--r-icon);
+  background: var(--c-light);
+  color: var(--c-dark);
+  font-size: 24px;
+  line-height: 1;
+  transition: transform 420ms var(--spring);
+}
+.back-button:active { transform: scale(.94); transition-duration: 90ms; }
+.back-icon { width: 22px; height: 22px; }
+
+.week-chip {
+  height: 44px;
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  border-radius: var(--r-icon);
+  background: var(--c-light);
+  color: var(--c-dark);
+  font-weight: 800;
+  font-size: 12.5px;
+  letter-spacing: .06em;
+}
+
+.detail-intro { padding: 14px var(--gutter) 12px; }
+.intro-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.detail-name {
+  --len: 5;
+  margin: 10px 0 0 -3px;
+  font-size: clamp(56px, 28vw, 104px);
+  font-size: clamp(56px, calc(100cqw * 1.7 / var(--len)), 104px);
+  white-space: nowrap;
+}
+
+/* ---- Hoofdbeeld ---- */
+.hero {
+  position: relative;
+  margin: 0 var(--gutter);
+  height: clamp(240px, 42dvh, 540px);
+  flex: none;
+}
+.hero-photo {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--r-hero);
+  background-color: var(--c-ink);
+  background-size: cover;
+  background-position: center 28%;
+  background-repeat: no-repeat;
+}
+
+/* Stickers op de foto: smiley (rechtsboven) en taak (linksonder) */
+.hero-face, .hero-task {
+  position: absolute;
+  width: clamp(96px, 31cqw, 132px);
+  aspect-ratio: 1;
+  border-radius: 28px;
+}
+.hero-face {
+  top: -16px;
+  right: -10px;
+  padding: 12px;
+  background: var(--c-bg);
+  color: var(--c-ink);
+  transform: rotate(6deg);
+}
+.hero-task {
+  left: -8px;
+  bottom: -24px;
+  padding: 16px;
+  background: var(--c-ink);
+  color: var(--c-bg);
+  transform: rotate(-5deg);
+}
+
+/* "KLAAR"-stempel, alleen zichtbaar als de taak gedaan is */
+.hero-stamp {
+  position: absolute;
+  right: 16px;
+  bottom: 18px;
+  padding: 12px 16px 8px;
+  border-radius: var(--r-md);
+  background: var(--ink);
+  color: var(--paper);
+  font-size: clamp(44px, 15cqw, 64px);
+  transform: rotate(-7deg) scale(0);
+}
+.detail-screen.is-done .hero-stamp {
+  animation: stamp-in 620ms var(--spring) 120ms both;
+}
+
+/* Intro-animaties van het taakscherm (spelen bij openen) */
+.detail-screen.active .detail-name   { animation: rise-in 640ms var(--soft) 60ms both; }
+.detail-screen.active .hero-photo    { animation: hero-in 720ms var(--spring) 90ms both; }
+.detail-screen.active .hero-face     { animation: sticker-in-r 700ms var(--spring) 260ms both; }
+.detail-screen.active .hero-task     { animation: sticker-in-l 700ms var(--spring) 340ms both; }
+.detail-screen.active .task-block    { animation: rise-in 620ms var(--soft) 200ms both; }
+.detail-screen.active .panel         { animation: panel-in 640ms var(--soft) 260ms both; }
+
+.task-block { padding: 42px var(--gutter) 0; }
+.detail-task-name {
+  margin: 10px 0 0;
+  font-size: clamp(38px, 12cqw, 58px);
+  line-height: .9;
+  overflow-wrap: anywhere;
+}
+
+/* ---- Rustig onderpaneel met de instructies ---- */
+.panel {
+  flex: 1 0 auto;
+  margin-top: 28px;
+  padding: 26px var(--gutter) 6px;
+  border-radius: var(--r-sheet) var(--r-sheet) 0 0;
+  background: var(--paper);
+  color: var(--ink);
+}
+.instructions {
+  margin: 10px 0 0;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.42;
+}
+
+.done-note { display: none; margin-bottom: 22px; }
+.detail-screen.is-done .done-note { display: block; animation: pop-in 560ms var(--spring) both; }
+.done-title { margin: 0; font-size: clamp(56px, 19cqw, 84px); color: var(--ink); }
+.done-meta { margin: 10px 0 0; font-weight: 800; font-size: 12.5px; letter-spacing: .06em; opacity: .6; }
+
+/* Actieknop: hoort bij het paneel (één doorlopend papiervlak, geen
+   losse balk die over de foto schuift → geen harde randen bij scrollen) */
+.action-bar {
+  padding: 14px var(--gutter) calc(var(--safe-bottom) + 18px);
+  background: var(--paper);
+  margin-top: -1px;
+}
+.detail-screen.active .action-bar { animation: panel-in 640ms var(--soft) 260ms both; }
+.detail-screen.no-task .action-bar { display: none; }
+
+.done-button {
+  width: 100%;
+  min-height: 72px;
+  border-radius: var(--r-btn);
+  background: var(--ink);
+  color: var(--paper);
+  font-size: clamp(21px, 7cqw, 28px);
+  line-height: 1;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 6px 16px 2px;
+  transition: transform 460ms var(--spring), background-color 240ms var(--soft), color 240ms var(--soft);
+}
+.done-button:active:not(:disabled) { transform: scale(.94); transition-duration: 100ms; }
+.done-button:disabled { cursor: default; }
+.done-button.is-saving { opacity: .7; }
+.done-button.is-error { background: var(--red); color: var(--red-ink); font-size: 22px; }
+.detail-screen.is-done .done-button { background: var(--c-bg); color: var(--c-ink); }
+.done-button .btn-icon { width: 28px; height: 28px; flex: none; margin-top: -4px; }
+
+/* ============================================================
+   SCHERM C — VOLTOOID (korte feestelijke overlay)
+   ============================================================ */
+.celebrate {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: var(--gutter);
+  text-align: center;
+  overflow: hidden;
+  background: var(--c-ink);
+  color: var(--c-bg);
+}
+.celebrate.show { display: flex; animation: burst-in 560ms var(--spring) both; }
+.celebrate.hide { display: flex; animation: burst-out 340ms var(--soft) forwards; }
+
+.celebrate-face { width: min(58cqw, 260px); aspect-ratio: 1; position: relative; z-index: 2; }
+.celebrate-title { margin: 0; font-size: clamp(70px, 26cqw, 104px); position: relative; z-index: 2; }
+.celebrate.show .celebrate-title { animation: pop-in 620ms var(--spring) 160ms both; }
+.celebrate-sub { margin: 0; font-weight: 800; font-size: 13px; letter-spacing: .08em; position: relative; z-index: 2; }
+
+.confetti { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.confetti i {
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  width: var(--s);
+  height: var(--s);
+  border-radius: 6px;
+  background: var(--k);
+  animation: confetti-fly 1100ms var(--soft) var(--d) both;
+}
+
+/* ============================================================
+   LAADSCHERM
+   ============================================================ */
+.loading-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 40px var(--gutter);
+  text-align: center;
+  background: var(--yellow);
+  color: var(--yellow-ink);
+  transition: opacity 320ms var(--soft);
+}
+.loading-overlay.is-hidden { opacity: 0; pointer-events: none; }
+.loading-face { width: 150px; aspect-ratio: 1; }
+#loading-text { margin: 0; font-size: 44px; }
+.loading-overlay.is-error { background: var(--red); color: var(--red-ink); }
+.loading-overlay.is-error #loading-text {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 17px;
+  line-height: 1.4;
+  text-transform: none;
+  max-width: 300px;
+}
+
+/* ============================================================
+   HUISREGELS — onderpaneel
+   ============================================================ */
+.rules-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 60;
+  background: rgba(20, 18, 16, .55);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 260ms var(--soft), visibility 260ms;
+}
+.rules-overlay.active { opacity: 1; visibility: visible; }
+
+.rules-sheet {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -120px;               /* steekt onder het scherm uit… */
+  z-index: 61;
+  max-height: calc(80% + 120px);
+  overflow-y: auto;
+  overscroll-behavior: none;
+  padding: 26px var(--gutter) calc(var(--safe-bottom) + 26px + 120px); /* …en compenseert dat hier */
+  border-radius: var(--r-sheet) var(--r-sheet) 0 0;
+  background: var(--paper);
+  transform: translateY(105%);
+  visibility: hidden;
+  transition: transform 520ms var(--soft), visibility 520ms;
+}
+.rules-sheet.active { transform: translateY(0); visibility: visible; transition: transform 560ms var(--spring), visibility 0s; }
+
+.rules-sheet-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.rules-sheet-title { margin: 0; font-size: clamp(56px, 19cqw, 84px); }
+
+.rules-list { display: flex; flex-direction: column; gap: 10px; }
+.rule-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  border-radius: var(--r-lg);
+  background: var(--k-bg);
+  color: var(--k-ink);
+}
+.rules-sheet.active .rule-item {
+  animation: card-in 600ms var(--spring) both;
+  animation-delay: calc(var(--i) * 45ms + 120ms);
+}
+.rule-icon { width: 30px; height: 30px; flex: none; }
+.rule-text { flex: 1; min-width: 0; font-size: 16px; font-weight: 700; line-height: 1.35; overflow-wrap: anywhere; }
+
+
+/* ============================================================
+   SMILEYS — losse onderdelen bewegen apart (aangestuurd door app.js)
+   ============================================================ */
+.face svg { overflow: visible; }
+.smiley { animation: face-in 680ms var(--spring) both; }
+.smiley .eyes  { transition: transform 360ms var(--soft); }
+.smiley .mouth { transition: transform 460ms var(--soft) 110ms; }
+.smiley .blink {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 90ms ease-in-out;
+}
+.smiley .blink.shut { transform: scaleY(.12); }
+
+/* ============================================================
+   KEYFRAMES
+   ============================================================ */
+@keyframes face-in {
+  from { transform: scale(.2) rotate(-14deg); opacity: 0; }
+  60%  { opacity: 1; }
+  to   { transform: none; opacity: 1; }
+}
+@keyframes card-in {
+  from { transform: translateY(28px) scale(.86); opacity: 0; }
+  to   { transform: none; opacity: 1; }
+}
+@keyframes pop-in {
+  from { transform: scale(.6); opacity: 0; }
+  to   { transform: none; opacity: 1; }
+}
+@keyframes rise-in {
+  from { transform: translateY(26px); opacity: 0; }
+  to   { transform: none; opacity: 1; }
+}
+@keyframes reveal {
+  from { clip-path: circle(0 at var(--ox, 50%) var(--oy, 50%)); }
+  to   { clip-path: circle(150% at var(--ox, 50%) var(--oy, 50%)); }
+}
+@keyframes conceal {
+  from { clip-path: circle(150% at var(--ox, 50%) var(--oy, 50%)); }
+  to   { clip-path: circle(0 at var(--ox, 50%) var(--oy, 50%)); }
+}
+@keyframes hero-in {
+  from { transform: scale(.86) rotate(-2deg); opacity: 0; }
+  to   { transform: none; opacity: 1; }
+}
+@keyframes sticker-in-r {
+  from { transform: rotate(-20deg) scale(.2); }
+  to   { transform: rotate(6deg) scale(1); }
+}
+@keyframes sticker-in-l {
+  from { transform: rotate(18deg) scale(.2); }
+  to   { transform: rotate(-5deg) scale(1); }
+}
+@keyframes stamp-in {
+  from { transform: rotate(-24deg) scale(2.2); opacity: 0; }
+  to   { transform: rotate(-7deg) scale(1); opacity: 1; }
+}
+@keyframes panel-in {
+  from { transform: translateY(60px); }
+  to   { transform: none; }
+}
+@keyframes strike-pop {
+  0%   { transform: scale(.4) rotate(-20deg); }
+  100% { transform: none; }
+}
+@keyframes burst-in {
+  from { clip-path: circle(0 at 50% 85%); }
+  to   { clip-path: circle(150% at 50% 85%); }
+}
+@keyframes burst-out {
+  to { opacity: 0; transform: scale(1.04); }
+}
+@keyframes confetti-fly {
+  0%   { transform: translate(-50%, -50%) scale(.2) rotate(0); opacity: 1; }
+  80%  { opacity: 1; }
+  100% { transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(1) rotate(var(--rot)); opacity: 0; }
+}
+
+/* ============================================================
+   KLEINE TELEFOONS
+   ============================================================ */
+@media (max-width: 350px) {
+  :root { --gutter: 16px; }
+  .cards-grid { gap: 10px; }
+  .home-header { gap: 10px; }
+  .week-block { padding: 9px 9px 10px; }
+  .week-label, .week-range, .week-left { font-size: 11px; letter-spacing: .03em; }
+}
+/* Lage schermen (bv. liggend): home mag dan scrollen */
+@media (max-height: 600px) {
+  .cards-grid { min-height: 520px; }
+}
+
+/* ============================================================
+   MINDER BEWEGING — alle animaties uit
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  .hero-stamp { transform: rotate(-7deg) scale(0); }
+  .detail-screen.is-done .hero-stamp { transform: rotate(-7deg); }
+}

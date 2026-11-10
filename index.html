@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#141210">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<!-- black-translucent: de app loopt door tot helemaal bovenin, onder de statusbalk -->
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>BR Chore Tracker</title>
+
+<!-- Icoon voor het beginscherm (2×2 smileys) -->
+<meta name="apple-mobile-web-app-title" content="Chores">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+
+<!-- Lettertypes: Barlow Condensed 900 (koppen) + Rubik (tekst) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@900&family=Rubik:wght@400;600;700;800&display=swap">
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="app" id="app">
+
+    <!-- ==================== LAADSCHERM ==================== -->
+    <!-- Zichtbaar totdat de gedeelde data uit Firestore binnen is -->
+    <div id="loading-overlay" class="loading-overlay">
+      <div class="loading-face face" id="loading-face"></div>
+      <p id="loading-text">Verbinden...</p>
+    </div>
+
+    <!-- ==================== HOME SCHERM ==================== -->
+    <section id="home-screen" class="screen home-screen active">
+      <div class="home-topbar">
+        <span class="eyebrow">BR · HUISTAKEN</span>
+        <button id="rules-fab" class="icon-button" type="button" aria-label="Huisregels">
+          <span id="rules-fab-icon"></span>
+        </button>
+      </div>
+
+      <header class="home-header">
+        <h1 class="app-title">CHORE<br>TRACKER</h1>
+        <div class="week-block" id="week-block">
+          <span class="week-label">WEEK</span>
+          <span class="week-num" id="week-num">00</span>
+          <span class="week-range" id="week-range-label">–</span>
+          <span class="week-left" id="week-left-label"></span>
+        </div>
+      </header>
+
+      <div class="cards-grid" id="cards-container">
+        <!-- persoonskaarten worden door app.js ingevuld (PEOPLE in data.js) -->
+      </div>
+    </section>
+
+    <!-- ==================== PERSOONLIJK TAAKSCHERM ==================== -->
+    <section id="detail-screen" class="screen detail-screen" aria-hidden="true">
+      <header class="detail-bar">
+        <button id="back-button" class="back-button" type="button">
+          <span class="back-icon"></span>TERUG
+        </button>
+        <div class="week-chip" id="detail-week-label">WK</div>
+      </header>
+
+      <div class="detail-intro">
+        <div class="intro-row">
+          <span class="eyebrow" id="detail-greeting">HOI,</span>
+          <div class="strikes strikes-lg" id="detail-strikes-row"></div>
+        </div>
+        <h1 class="detail-name" id="detail-name">NAAM</h1>
+      </div>
+
+      <!-- Groot hoofdbeeld: foto + stickers (smiley en taakillustratie) -->
+      <div class="hero">
+        <div class="hero-photo"></div>
+        <div class="hero-face face" id="detail-face"></div>
+        <div class="hero-task" id="detail-icon"></div>
+        <div class="hero-stamp">KLAAR</div>
+      </div>
+
+      <div class="task-block">
+        <span class="eyebrow">KLUS VAN DE WEEK</span>
+        <h2 class="detail-task-name" id="detail-task-name">TAAK</h2>
+      </div>
+
+      <div class="panel">
+        <div class="done-note">
+          <p class="done-title">NETJES.<br>KLAAR.</p>
+          <p class="done-meta" id="done-meta"></p>
+        </div>
+        <span class="eyebrow">ZO DOE JE HET</span>
+        <p class="instructions" id="detail-instructions">Instructietekst</p>
+      </div>
+
+      <div class="action-bar">
+        <button id="detail-button" class="done-button" type="button">IK HEB HET GEDAAN</button>
+      </div>
+    </section>
+
+    <!-- Kapje achter de iPhone-statusbalk (alleen zichtbaar tijdens scrollen) -->
+    <div id="status-cover" class="status-cover" aria-hidden="true"></div>
+
+    <!-- ==================== VOLTOOID-ANIMATIE ==================== -->
+    <div id="celebrate" class="celebrate" aria-live="polite">
+      <div class="confetti" id="confetti"></div>
+      <div class="celebrate-face face" id="celebrate-face"></div>
+      <p class="celebrate-title">NETJES.<br>KLAAR.</p>
+      <p class="celebrate-sub" id="celebrate-sub"></p>
+    </div>
+
+    <!-- ==================== HUISREGELS POP-UP ==================== -->
+    <div id="rules-overlay" class="rules-overlay"></div>
+    <section id="rules-sheet" class="rules-sheet" aria-hidden="true">
+      <div class="rules-sheet-header">
+        <h2 class="rules-sheet-title">HUIS&shy;REGELS</h2>
+        <button id="rules-close" class="icon-button" type="button" aria-label="Sluiten">
+          <span id="rules-close-icon"></span>
+        </button>
+      </div>
+      <div class="rules-list" id="rules-list">
+        <!-- regels worden door app.js ingevuld, zie HOUSE_RULES in data.js -->
+      </div>
+
+    </section>
+
+  </div>
+
+  <!-- Firebase (gedeelde, live opslag tussen alle huisgenoten) -->
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+
+  <script src="icons.js"></script>
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
